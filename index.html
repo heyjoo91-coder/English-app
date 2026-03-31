@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>영어 암기카드 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fff8f5;
+  --pink: #ffb3c6;
+  --pink-soft: #ffe0e9;
+  --mint: #b5ead7;
+  --mint-soft: #d9f5ec;
+  --lavender: #c9b8f5;
+  --lavender-soft: #ede8ff;
+  --yellow: #fef08a;
+  --yellow-soft: #fefce8;
+  --text: #3d2c2c;
+  --muted: #9e8585;
+  --white: #ffffff;
+  --shadow: 0 4px 20px rgba(200,150,150,0.15);
+  --shadow-lg: 0 8px 32px rgba(200,150,150,0.2);
+  --radius: 24px;
+  --radius-sm: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255,179,198,0.2) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(181,234,215,0.2) 0%, transparent 40%);
+  min-height: 100vh;
+  font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+button { cursor: pointer; font-family: inherit; }
+
+/* DOODLES */
+.doodle {
+  position: fixed; pointer-events: none; opacity: 0.15; z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+.doodle:nth-child(1){top:4%;left:3%;font-size:1.8rem;animation-delay:0s}
+.doodle:nth-child(2){top:12%;right:4%;font-size:1.4rem;animation-delay:1s}
+.doodle:nth-child(3){top:68%;left:2%;font-size:2.1rem;animation-delay:2s}
+.doodle:nth-child(4){top:78%;right:3%;font-size:1.6rem;animation-delay:0.5s}
+.doodle:nth-child(5){top:42%;left:1%;font-size:1.2rem;animation-delay:3s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(7deg)}}
+
+/* ══ SETUP ══ */
+#setup-screen {
+  width:100%; max-width:520px; min-height:100vh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:40px 22px; gap:20px; position:relative; z-index:1;
+}
+.logo-area{text-align:center}
+.logo-emoji{font-size:3rem;display:block;margin-bottom:8px;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.logo-title{font-size:1.9rem;font-weight:800;color:var(--text);letter-spacing:-0.5px}
+.logo-title span{color:#e07090}
+.logo-sub{font-size:0.9rem;color:var(--muted);margin-top:4px}
+
+.card-box{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.section-label{font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+
+textarea {
+  width:100%;height:130px;
+  border:2px dashed #f5c0d0;border-radius:var(--radius-sm);
+  background:var(--pink-soft);color:var(--text);
+  font-family:inherit;font-size:0.88rem;padding:12px 14px;
+  outline:none;resize:vertical;line-height:1.6;transition:border-color 0.2s;
+}
+textarea:focus{border-color:var(--pink);border-style:solid}
+textarea::placeholder{color:#c8a0a8}
+
+.hint{font-size:0.8rem;color:var(--muted);margin-top:8px;line-height:1.6;background:var(--yellow-soft);border-radius:10px;padding:8px 12px}
+.hint strong{color:#c07040}
+
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode-btn{
+  background:var(--white);border:2px solid #f0d8e0;color:var(--muted);
+  font-size:0.83rem;font-weight:700;padding:12px 8px;border-radius:var(--radius-sm);
+  transition:all 0.18s;text-align:center;line-height:1.45;
+}
+.mode-btn:hover{border-color:var(--pink);color:#e07090;background:var(--pink-soft)}
+.mode-btn.active{border-color:#e07090;color:#e07090;background:var(--pink-soft);box-shadow:0 2px 10px rgba(224,112,144,0.2)}
+
+.start-btn{
+  background:linear-gradient(135deg,#ff8fab,#e07090);color:white;
+  font-size:1.05rem;font-weight:800;padding:17px;border:none;
+  border-radius:var(--radius);width:100%;
+  box-shadow:0 4px 16px rgba(224,112,144,0.4);
+  transition:transform 0.15s,box-shadow 0.15s;letter-spacing:0.02em;
+}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(224,112,144,0.5)}
+.start-btn:active{transform:scale(0.97)}
+
+.sample-btn{
+  background:var(--white);border:2px solid #e8d5f0;color:#9370bb;
+  font-size:0.88rem;font-weight:700;padding:13px;border-radius:var(--radius);width:100%;transition:all 0.2s;
+}
+.sample-btn:hover{background:var(--lavender-soft);border-color:var(--lavender)}
+
+.error-msg{font-size:0.85rem;color:#c0392b;background:#fde8e8;border-radius:12px;padding:12px 16px;display:none;font-weight:600}
+
+/* ══ QUIZ ══ */
+#quiz-screen{
+  display:none;width:100%;max-width:560px;min-height:100vh;
+  flex-direction:column;padding:20px 18px 32px;gap:16px;
+  position:relative;z-index:1;
+}
+.top-bar{display:flex;align-items:center;gap:12px}
+.back-btn{
+  background:var(--white);border:2px solid #f0d8e0;color:var(--muted);
+  width:40px;height:40px;border-radius:50%;font-size:1.1rem;flex-shrink:0;
+  transition:all 0.2s;display:flex;align-items:center;justify-content:center;
+}
+.back-btn:hover{border-color:var(--pink);color:#e07090}
+.progress-wrap{flex:1}
+.progress-bar{height:10px;background:#f5e0e8;border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#ffb3c6,#e07090);border-radius:99px;transition:width 0.4s cubic-bezier(.4,0,.2,1)}
+.counter{font-size:0.78rem;color:var(--muted);font-weight:700;text-align:right;margin-top:5px}
+.score-pills{display:flex;gap:6px;flex-shrink:0}
+.pill{padding:5px 11px;border-radius:99px;font-size:0.8rem;font-weight:800}
+.pill-ok{background:var(--mint-soft);color:#2d9e72}
+.pill-no{background:#fde8e8;color:#c0392b}
+
+/* 플래시카드 */
+.flashcard{
+  background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-lg);
+  padding:32px 26px 28px;min-height:220px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;position:relative;overflow:hidden;
+}
+.flashcard::before{
+  content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;
+  background:radial-gradient(circle,rgba(255,179,198,0.35) 0%,transparent 70%);pointer-events:none;
+}
+.flashcard::after{
+  content:'';position:absolute;bottom:-30px;left:-30px;width:100px;height:100px;
+  background:radial-gradient(circle,rgba(181,234,215,0.3) 0%,transparent 70%);pointer-events:none;
+}
+.day-badge{
+  background:linear-gradient(135deg,var(--lavender),#b09de8);color:white;
+  font-size:0.75rem;font-weight:800;padding:4px 14px;border-radius:99px;
+  letter-spacing:0.06em;box-shadow:0 2px 8px rgba(176,157,232,0.4);z-index:1;
+}
+.card-direction{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);background:var(--bg);padding:3px 12px;border-radius:99px;z-index:1}
+.card-front-text{font-size:1.55rem;font-weight:700;color:var(--text);text-align:center;line-height:1.5;z-index:1}
+.card-front-text.is-ko{font-size:1.3rem;color:#6040a0}
+.answer-wrap{width:100%;text-align:center;z-index:1}
+.answer-dots{font-size:1.3rem;letter-spacing:0.3em;color:#d8b8c8}
+.answer-text{font-size:1.3rem;font-weight:700;color:#e07090;line-height:1.5;animation:popIn 0.3s cubic-bezier(.4,0,.2,1)}
+.answer-text.is-ko{font-size:1.15rem;color:#7050b0}
+@keyframes popIn{from{opacity:0;transform:scale(0.88) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.reveal-btn{
+  background:var(--yellow-soft);border:2px dashed #f0d070;color:#b08030;
+  font-size:0.92rem;font-weight:700;padding:11px 28px;border-radius:var(--radius);transition:all 0.2s;
+}
+.reveal-btn:hover{background:var(--yellow);border-style:solid}
+
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.action-btn{
+  padding:17px;border-radius:var(--radius);font-size:1rem;font-weight:800;border:none;
+  transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.action-btn:active{transform:scale(0.96)}
+.action-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none}
+.btn-wrong{background:#fde8e8;color:#c0392b;box-shadow:0 3px 12px rgba(192,57,43,0.15)}
+.btn-wrong:not(:disabled):hover{background:#fac8c8}
+.btn-correct{background:var(--mint-soft);color:#1e8a5c;box-shadow:0 3px 12px rgba(30,138,92,0.15)}
+.btn-correct:not(:disabled):hover{background:#a8e8d0}
+
+/* ══ RESULT ══ */
+#result-screen{
+  display:none;width:100%;max-width:520px;min-height:100vh;
+  flex-direction:column;align-items:center;
+  padding:36px 20px 48px;gap:18px;overflow-y:auto;
+  position:relative;z-index:1;
+}
+.result-hero{text-align:center;padding:10px 0}
+.result-emoji{font-size:3.5rem;display:block;margin-bottom:8px}
+.result-title{font-size:1.7rem;font-weight:800;color:var(--text)}
+.result-msg{font-size:0.92rem;color:var(--muted);margin-top:4px}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+.stat-card{background:var(--white);border-radius:var(--radius-sm);padding:18px 14px;text-align:center;box-shadow:var(--shadow)}
+.stat-val{font-size:2rem;font-weight:800;color:var(--text)}
+.stat-lbl{font-size:0.78rem;color:var(--muted);font-weight:600;margin-top:2px}
+.s-pink .stat-val{color:#e07090}
+.s-mint .stat-val{color:#2d9e72}
+.s-red  .stat-val{color:#c0392b}
+.s-purple .stat-val{color:#7050b0}
+
+/* 틀린 목록 */
+.wrong-section{width:100%;background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.wrong-section-title{font-size:0.88rem;font-weight:800;color:#c0392b;margin-bottom:12px}
+.wrong-item{
+  background:#fff5f5;border-left:3px solid #ffb3b3;
+  border-radius:0 10px 10px 0;padding:10px 12px;margin-bottom:8px;
+  font-size:0.85rem;line-height:1.6;
+}
+.wrong-item:last-child{margin-bottom:0}
+.wi-day{
+  display:inline-block;background:linear-gradient(135deg,var(--lavender),#b09de8);
+  color:white;font-size:0.68rem;font-weight:800;padding:2px 9px;
+  border-radius:99px;margin-bottom:4px;
+}
+.wi-en{font-weight:700;color:var(--text)}
+.wi-ko{color:var(--muted);font-size:0.8rem}
+
+.result-btns{display:flex;flex-direction:column;gap:10px;width:100%}
+.result-btns button{padding:15px;border-radius:var(--radius);font-size:0.97rem;font-weight:800;border:none;transition:all 0.18s}
+.result-btns button:hover{transform:translateY(-1px)}
+.rbtn-retry{background:linear-gradient(135deg,#ff8fab,#e07090);color:white;box-shadow:0 4px 14px rgba(224,112,144,0.4)}
+.rbtn-home{background:var(--white);color:var(--muted);border:2px solid #f0d8e0 !important}
+.rbtn-home:hover{background:var(--pink-soft);color:#e07090}
+</style>
+</head>
+<body>
+
+<span class="doodle">🌸</span>
+<span class="doodle">⭐</span>
+<span class="doodle">🌿</span>
+<span class="doodle">🌙</span>
+<span class="doodle">✨</span>
+
+<!-- ══ SETUP ══ -->
+<div id="setup-screen">
+  <div class="logo-area">
+    <span class="logo-emoji">🌸</span>
+    <div class="logo-title">영어 <span>암기카드</span></div>
+    <div class="logo-sub">귀엽게 외우는 영어 문장 🌟</div>
+  </div>
+
+  <div class="card-box">
+    <div class="section-label">📋 구글 시트 데이터 붙여넣기</div>
+    <textarea id="paste-area" placeholder="구글 시트에서 전체 선택(Ctrl+A) → 복사(Ctrl+C) → 여기 붙여넣기(Ctrl+V)"></textarea>
+    <p class="hint">
+      📌 컬럼 순서: <strong>A열 = 영어 · B열 = 한국어 · C열 = Day</strong><br>
+      Day가 있으면 틀렸을 때 몇 일차 문장인지 표시돼요!
+    </p>
+  </div>
+
+  <div id="error-msg" class="error-msg"></div>
+
+  <div class="card-box">
+    <div class="section-label">🎯 암기 방향</div>
+    <div class="mode-grid">
+      <button class="mode-btn" data-mode="en-ko">🇺🇸 영어 →<br>🇰🇷 한국어</button>
+      <button class="mode-btn active" data-mode="ko-en">🇰🇷 한국어 →<br>🇺🇸 영어</button>
+      <button class="mode-btn" data-mode="both">🔀 둘 다<br>섞기</button>
+      <button class="mode-btn" data-mode="listen">👁 보고<br>따라읽기</button>
+    </div>
+  </div>
+
+  <button class="start-btn" onclick="loadSheet()">시작하기 🚀</button>
+  <button class="sample-btn" onclick="useSample()">🌷 샘플 데이터로 먼저 해보기</button>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div id="quiz-screen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="counter" id="counter">1 / 1</div>
+    </div>
+    <div class="score-pills">
+      <span class="pill pill-ok" id="score-ok">✓ 0</span>
+      <span class="pill pill-no" id="score-no">✗ 0</span>
+    </div>
+  </div>
+
+  <div class="flashcard">
+    <div class="day-badge" id="day-badge" style="display:none">Day 1</div>
+    <div class="card-direction" id="card-direction">한국어</div>
+    <div class="card-front-text" id="card-front">—</div>
+    <div class="answer-wrap">
+      <div id="answer-placeholder" class="answer-dots">· · · · ·</div>
+      <div id="answer-text" style="display:none" class="answer-text"></div>
+    </div>
+  </div>
+
+  <div style="text-align:center">
+    <button class="reveal-btn" id="reveal-btn" onclick="reveal()">💡 답 확인하기</button>
+  </div>
+
+  <div class="action-row">
+    <button class="action-btn btn-wrong" id="btn-wrong" onclick="answer(false)" disabled>😢 몰랐어</button>
+    <button class="action-btn btn-correct" id="btn-correct" onclick="answer(true)" disabled>🌟 알았어!</button>
+  </div>
+</div>
+
+<!-- ══ RESULT ══ -->
+<div id="result-screen">
+  <div class="result-hero">
+    <span class="result-emoji" id="result-emoji">🎉</span>
+    <div class="result-title" id="result-title">완료!</div>
+    <div class="result-msg" id="result-msg"></div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card s-mint"><div class="stat-val" id="r-correct">0</div><div class="stat-lbl">✅ 맞힌 문장</div></div>
+    <div class="stat-card s-red"> <div class="stat-val" id="r-wrong">0</div>  <div class="stat-lbl">❌ 틀린 문장</div></div>
+    <div class="stat-card s-purple"><div class="stat-val" id="r-total">0</div><div class="stat-lbl">📚 총 문장</div></div>
+    <div class="stat-card s-pink"><div class="stat-val" id="r-rate">0%</div>  <div class="stat-lbl">🎯 정답률</div></div>
+  </div>
+
+  <div class="wrong-section" id="wrong-section" style="display:none">
+    <div class="wrong-section-title">😢 틀린 문장 목록</div>
+    <div id="wrong-list"></div>
+  </div>
+
+  <div class="result-btns">
+    <button class="rbtn-retry" id="rbtn-retry" onclick="retryWrong()">🔄 틀린 것만 다시 풀기</button>
+    <button class="rbtn-home" onclick="goBack()">🏠 처음으로</button>
+  </div>
+</div>
+
+<script>
+let sentences = [];
+let queue = [];
+let currentIdx = 0, correctCount = 0, wrongCount = 0;
+let wrongList = [];
+let mode = 'ko-en';
+let revealed = false;
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    mode = btn.dataset.mode;
+  });
+});
+
+const SAMPLE = [
+  {en:"The early bird catches the worm.", ko:"일찍 일어나는 새가 벌레를 잡는다.", day:"Day 1"},
+  {en:"Practice makes perfect.", ko:"연습이 완벽을 만든다.", day:"Day 1"},
+  {en:"Actions speak louder than words.", ko:"행동은 말보다 크게 말한다.", day:"Day 2"},
+  {en:"Every cloud has a silver lining.", ko:"힘든 상황에도 희망은 있다.", day:"Day 2"},
+  {en:"Time flies when you're having fun.", ko:"즐거울 때는 시간이 빨리 간다.", day:"Day 3"},
+  {en:"You can't judge a book by its cover.", ko:"겉모습으로 판단하지 마라.", day:"Day 3"},
+  {en:"Better late than never.", ko:"늦더라도 안 하는 것보다는 낫다.", day:"Day 4"},
+  {en:"Where there's a will, there's a way.", ko:"뜻이 있는 곳에 길이 있다.", day:"Day 4"},
+];
+function useSample() { sentences = SAMPLE; startQuiz(); }
+
+// A=영어, B=한국어, C=Day
+function loadSheet() {
+  const raw = document.getElementById('paste-area').value.trim();
+  if (!raw) { showError('데이터를 붙여넣어 주세요.'); return; }
+  hideError();
+  const lines = raw.split(/\r?\n/).filter(l => l.trim());
+  sentences = [];
+  for (const line of lines) {
+    const cols = line.split('\t');
+    const en  = (cols[0] || '').trim();
+    const ko  = (cols[1] || '').trim();
+    const day = (cols[2] || '').trim();
+    if (en && ko) sentences.push({ en, ko, day });
+  }
+  if (sentences.length === 0) { showError('유효한 문장이 없습니다. A열: 영어, B열: 한국어 형식인지 확인해 주세요.'); return; }
+  startQuiz();
+}
+
+function buildQueue() {
+  let q = sentences.map(s => {
+    let dir = mode === 'both' ? (Math.random()>.5?'en-ko':'ko-en') : mode === 'ko-en' ? 'ko-en' : 'en-ko';
+    if (mode === 'listen') dir = 'en-ko';
+    return { ...s, dir };
+  });
+  for (let i = q.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [q[i],q[j]]=[q[j],q[i]]; }
+  return q;
+}
+
+function startQuiz() {
+  queue = buildQueue(); currentIdx=0; correctCount=0; wrongCount=0; wrongList=[];
+  show('quiz-screen'); showCard();
+}
+
+function showCard() {
+  revealed = false;
+  const item = queue[currentIdx];
+  const total = queue.length;
+
+  document.getElementById('progress-fill').style.width = (currentIdx/total*100)+'%';
+  document.getElementById('counter').textContent = `${currentIdx+1} / ${total}`;
+  document.getElementById('score-ok').textContent = `✓ ${correctCount}`;
+  document.getElementById('score-no').textContent = `✗ ${wrongCount}`;
+
+  const dayBadge = document.getElementById('day-badge');
+  if (item.day) { dayBadge.textContent = item.day; dayBadge.style.display='inline-block'; }
+  else           { dayBadge.style.display='none'; }
+
+  const isEnFront = item.dir === 'en-ko';
+  document.getElementById('card-direction').textContent = isEnFront ? '🇺🇸 영어' : '🇰🇷 한국어';
+  const frontEl = document.getElementById('card-front');
+  frontEl.textContent = isEnFront ? item.en : item.ko;
+  frontEl.className = 'card-front-text' + (isEnFront ? '' : ' is-ko');
+
+  document.getElementById('answer-placeholder').style.display = 'block';
+  document.getElementById('answer-text').style.display = 'none';
+  document.getElementById('reveal-btn').style.display = 'inline-block';
+  document.getElementById('reveal-btn').textContent = mode==='listen' ? '💡 뜻 보기' : '💡 답 확인하기';
+  document.getElementById('btn-correct').disabled = true;
+  document.getElementById('btn-wrong').disabled = true;
+  document.getElementById('btn-correct').textContent = '🌟 알았어!';
+}
+
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  const item = queue[currentIdx];
+  const isEnFront = item.dir === 'en-ko';
+  document.getElementById('answer-placeholder').style.display = 'none';
+  const ansEl = document.getElementById('answer-text');
+  ansEl.textContent = isEnFront ? item.ko : item.en;
+  ansEl.className = 'answer-text' + (isEnFront ? ' is-ko' : '');
+  ansEl.style.display = 'block';
+  document.getElementById('reveal-btn').style.display = 'none';
+  if (mode === 'listen') {
+    document.getElementById('btn-correct').disabled = false;
+    document.getElementById('btn-correct').textContent = '다음 →';
+  } else {
+    document.getElementById('btn-correct').disabled = false;
+    document.getElementById('btn-wrong').disabled = false;
+  }
+}
+
+function answer(isCorrect) {
+  if (mode === 'listen') { currentIdx++; if(currentIdx>=queue.length) showResult(); else showCard(); return; }
+  if (isCorrect) correctCount++;
+  else { wrongCount++; wrongList.push(queue[currentIdx]); }
+  currentIdx++;
+  if (currentIdx >= queue.length) showResult(); else showCard();
+}
+
+function showResult() {
+  const total = queue.length;
+  const rate = total > 0 ? Math.round(correctCount/total*100) : 0;
+  document.getElementById('r-correct').textContent = correctCount;
+  document.getElementById('r-wrong').textContent   = wrongCount;
+  document.getElementById('r-total').textContent   = total;
+  document.getElementById('r-rate').textContent    = rate + '%';
+
+  let emoji='🎉', title='완료!', msg='모든 문장을 풀었어요!';
+  if (rate===100)      { emoji='🏆'; title='완벽해요!';     msg='모든 문장을 다 알고 있어요! 최고!'; }
+  else if (rate>=80)   { emoji='🌟'; title='잘했어요!';     msg='조금만 더 하면 완벽해질 거예요!'; }
+  else if (rate>=60)   { emoji='😊'; title='좋아요!';       msg='틀린 문장을 다시 복습해 봐요!'; }
+  else if (rate>=40)   { emoji='💪'; title='파이팅!';       msg='틀린 문장 위주로 다시 연습해요!'; }
+  else                 { emoji='📚'; title='열심히 해봐요!'; msg='꾸준히 하면 반드시 늘어요!'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-msg').textContent   = msg;
+
+  const section = document.getElementById('wrong-section');
+  const list    = document.getElementById('wrong-list');
+  const retryBtn= document.getElementById('rbtn-retry');
+  if (wrongList.length > 0) {
+    section.style.display = 'block';
+    retryBtn.style.display = 'block';
+    list.innerHTML = wrongList.map(item => `
+      <div class="wrong-item">
+        ${item.day ? `<span class="wi-day">${item.day}</span>` : ''}
+        <div class="wi-en">${item.en}</div>
+        <div class="wi-ko">${item.ko}</div>
+      </div>`).join('');
+  } else {
+    section.style.display = 'none';
+    retryBtn.style.display = 'none';
+  }
+  show('result-screen');
+}
+
+function retryWrong() {
+  if (!wrongList.length) { goBack(); return; }
+  queue = wrongList.slice();
+  for (let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}
+  currentIdx=0; correctCount=0; wrongCount=0; wrongList=[];
+  show('quiz-screen'); showCard();
+}
+
+function show(id) {
+  ['setup-screen','quiz-screen','result-screen'].forEach(s => {
+    document.getElementById(s).style.display = (s===id) ? 'flex' : 'none';
+  });
+}
+function goBack() { show('setup-screen'); }
+function showError(msg) { const el=document.getElementById('error-msg'); el.textContent='⚠️ '+msg; el.style.display='block'; }
+function hideError()    { document.getElementById('error-msg').style.display='none'; }
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('quiz-screen').style.display !== 'flex') return;
+  if ((e.key===' '||e.key==='Enter') && !revealed) reveal();
+  if ((e.key==='ArrowRight'||e.key==='k') && revealed && !document.getElementById('btn-correct').disabled) answer(true);
+  if ((e.key==='ArrowLeft' ||e.key==='j') && revealed && !document.getElementById('btn-wrong').disabled)   answer(false);
+});
+</script>
+</body>
+</html>
